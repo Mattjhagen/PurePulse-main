@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PurePulse</title>
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@500;800&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        html, body {
+            width: 100%;
+            height: 100%;
+            background: #000;
+            overflow: hidden;
+        }
+
+        video {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: 0;
+        }
+
+        .vignette {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            inset: 0;
+            z-index: 1;
+            background:
+                radial-gradient(ellipse at center, rgba(0,0,0,0.05) 0%, rgba(0,0,0,0.6) 100%),
+                linear-gradient(to bottom, rgba(0,0,0,0.25) 0%, transparent 30%, transparent 70%, rgba(0,0,0,0.45) 100%);
+            pointer-events: none;
+        }
+
+        .brand {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            z-index: 2;
+            animation: brandIn 1.2s cubic-bezier(0.16, 1, 0.3, 1) 0.4s both;
+        }
+
+        .wordmark {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            font-size: clamp(2.5rem, 8vw, 5.5rem);
+            font-weight: 800;
+            letter-spacing: -0.055em;
+            color: #fff;
+            line-height: 1;
+            margin-bottom: 0.6rem;
+        }
+
+        .tagline {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            font-size: clamp(0.6rem, 1.4vw, 0.8125rem);
+            font-weight: 500;
+            letter-spacing: 0.22em;
+            text-transform: uppercase;
+            color: rgba(255, 255, 255, 0.45);
+        }
+
+        .skip {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            background: rgba(255, 255, 255, 0.07);
+            border: 1px solid rgba(255, 255, 255, 0.16);
+            color: rgba(255, 255, 255, 0.55);
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            font-size: 0.8125rem;
+            font-weight: 500;
+            letter-spacing: 0.02em;
+            padding: 9px 22px;
+            border-radius: 100px;
+            cursor: pointer;
+            z-index: 3;
+            transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+            animation: fadeIn 0.7s ease 1.2s both;
+        }
+
+        .skip:hover {
+            background: rgba(255, 255, 255, 0.14);
+            color: #fff;
+            border-color: rgba(255, 255, 255, 0.3);
+        }
+
+        @keyframes brandIn {
+            from { opacity: 0; transform: translate(-50%, calc(-50% + 18px)); }
+            to   { opacity: 1; transform: translate(-50%, -50%); }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to   { opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+
+    <video id="vid" autoplay muted playsinline webkit-playsinline preload="auto">
+        <source src="splash.mp4" type="video/mp4">
+    </video>
+
+    <div class="vignette"></div>
+
+    <div class="brand">
+        <div class="wordmark">PurePulse</div>
+        <div class="tagline">Web Design &amp; Development</div>
+    </div>
+
+    <button class="skip" id="skip" type="button">Skip ›</button>
+
+    <script>
+        var vid  = document.getElementById('vid');
+        var skip = document.getElementById('skip');
+        var gone = false;
+
+        function go() {
+            if (gone) return;
+            gone = true;
+            window.location.href = 'home.html';
+        }
+
+        vid.addEventListener('ended', go);
+        skip.addEventListener('click', go);
+
+        // Video failed to load — wait 3.5s then redirect
+        vid.addEventListener('error', function () { setTimeout(go, 3500); });
+        var src = vid.querySelector('source');
+        if (src) src.addEventListener('error', function () { setTimeout(go, 3500); });
+
+        // Check after 600ms — if video still hasn't started, it's missing
+        setTimeout(function () {
+            if (vid.readyState === 0 || vid.networkState === 3) setTimeout(go, 3500);
+        }, 600);
+
+        // Hard cap — no matter what, redirect after 15s
+        setTimeout(go, 15000);
+    </script>
+
+</body>
+</html>
