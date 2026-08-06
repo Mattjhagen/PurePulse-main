@@ -1025,7 +1025,7 @@
             };
 
             try {
-                const res = await fetch('https://login.purepulse.one/api/leads', {
+                const res = await fetch('https://purepulseadmin.netlify.app/api/leads', {
                     method:  'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body:    JSON.stringify(data),
@@ -1034,11 +1034,11 @@
                 if (!res.ok) throw new Error('server error');
 
                 msg.className = 'form-message success';
-                msg.textContent = "Request received! Redirecting you to your portal…";
+                msg.textContent = "Request received! Check your email for a portal invite…";
                 form.reset();
 
                 setTimeout(() => {
-                    window.location.href = 'https://login.purepulse.one/portal';
+                    window.location.href = 'https://purepulseadmin.netlify.app/leads';
                 }, 1500);
             } catch {
                 msg.className = 'form-message error';
